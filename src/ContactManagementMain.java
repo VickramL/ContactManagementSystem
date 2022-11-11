@@ -12,23 +12,44 @@ public class ContactManagementMain {
 
     public static void main(String[] args) {
         signUps.add(new SignUp("vikram","Maxstuart2@"));
-        while ((true)){
+        while (true){
             System.out.println("[1].Sign Up ");
             System.out.println("[2].Login");
             System.out.println("[3].Exit\n");
-            int userInput = Integer.parseInt(input.nextLine());
+            int userInput = 0;
+            try {
+                userInput = Integer.parseInt(input.nextLine());
+            }catch (Exception e){
+                //System.err.println("Invalid input");
+                //input.nextLine();
+            }
 
             
-            if(!(userInput >=1 && userInput<=3))
+            if(!(userInput >=1 && userInput<=3)) {
+                System.out.println("Invalid input\n");
                 continue;
+            }
             if(userInput == 1){
                 System.out.println("\t\t****** Signup ******\n\n");
-                System.out.print("Enter Your UserName : ");
-                username = input.next();
-                //input.nextLine();
+                boolean flag = true;
+                while(flag) {
+                    System.out.print("Enter Your UserName : ");
+                    username = input.next();
+                    //input.nextLine();
+                    flag = false;
+                    for (SignUp signUp : signUps) {
+                        if (signUp.getUserName().equals(username)) {
+                            System.out.println("This UserName is Already Exist : \n");
+                            flag = true;
+                            break;
+                        }
+                    }
+                }
+
                 System.out.print("Enter Your Password : ");
                 password = input.next();
-                //input.nextLine();
+                input.nextLine();
+
 
                 while (true){
 

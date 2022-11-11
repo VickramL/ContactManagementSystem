@@ -19,10 +19,11 @@ public class Login {
     }
 
     public void contactOptions(){
+        contacts.add(new Contact("Karthik","9874682728","Trichy","Friend"));
+        contacts.add(new Contact("Barath","9374882323","Kanchipuram","Friend"));
+        contacts.add(new Contact("vijay","8954682728","vellore","Brother"));
         while(true){
-            contacts.add(new Contact("Karthik","9874682728","Trichy","Friend"));
-            contacts.add(new Contact("Barath","9374882323","Kanchipuram","Friend"));
-            contacts.add(new Contact("vijay","8954682728","vellore","Brother"));
+
             System.out.println("\n[1]. Add Contact");
             System.out.println("[2]. Delete");
             System.out.println("[3]. Search");
@@ -32,9 +33,15 @@ public class Login {
             System.out.println("[7]. Favorites");
             System.out.println("[8]. Exit\n");
 
-            int userInput = SignUp.input.nextInt();
+            int userInput = 0;
+            try {
+                userInput = Integer.parseInt(SignUp.input.nextLine());
+            }catch (Exception e){
+                //System.err.println("Invalid input");
+                //input.nextLine();
+            }
             if(!(userInput >= 1 && userInput <= 8)){
-                System.out.println("Invalid Input!!!");
+                System.err.println("Invalid Input!!!");
                 continue;
             }
 
@@ -43,10 +50,10 @@ public class Login {
                     System.out.println("\t\t****** Add Contact ******\n\n");
                     System.out.print("Contact Name : ");
                     contactName = SignUp.input.next();
-                    SignUp.input.nextLine();
-                    System.out.print("\nMobile Number : ");
-                    mobileNumber = SignUp.input.next();
-                    SignUp.input.nextLine();
+//                    SignUp.input.nextLine();
+//                    System.out.print("\nMobile Number : ");
+                    mobileNumber = isValidMobileNumber();
+//                    SignUp.input.nextLine();
                     System.out.print("\nAddress : ");
                     address = SignUp.input.next();
                     SignUp.input.nextLine();
@@ -62,33 +69,34 @@ public class Login {
                         }
                     }
 
-                    Pattern pattern = Pattern.compile("^\\d{10}$");
-                    Matcher matcher = pattern.matcher(mobileNumber);
-                    if(matcher.find()){
+//                    Pattern pattern = Pattern.compile("^[0-9]{10}$");
+//                    Matcher matcher = pattern.matcher(mobileNumber);
+//                    if(matcher.find()){
                         Contact contact = new Contact(contactName,mobileNumber,address,relationship);
                         contacts.add(contact);
                         System.out.println("\n***** Contact Created Successfully *****\n");
-                    }
-                    else
-                        System.out.println("\n***** Invalid Mobile Number *****\n");
+//                    }
+//                    else
+//                        System.err.println("\n***** Invalid Mobile Number *****\n");
                     break;
                 }
                 case 2 :{
                     System.out.println("\t\t**** Delete ****\n\n");
-                    System.out.println("Enter the Contact you want to delete");
+                    System.out.print("Enter the Contact you want to delete : ");
                     contactName = SignUp.input.next();
                     SignUp.input.nextLine();
                     boolean flag = true;
                     for(Contact contact:contacts){
                         if(contact.getContactName().equals(contactName)){
                             contacts.remove(contact);
+                            favorites.remove(contact);
                             System.out.println("\t\t****** Deleted Successfully ******\n");
                             flag = false;
                             break;
                         }
                     }
                     if (flag){
-                        System.out.println("Contact Not Found");
+                        System.err.println("Contact Not Found");
                     }
                     break;
                 }
@@ -97,21 +105,22 @@ public class Login {
                     System.out.print("Enter the Contact you Want to Search : ");
                     contactName = SignUp.input.next();
                     SignUp.input.nextLine();
+                    String name = contactName.toLowerCase();
                     if(contacts.size()!=0) {
                         boolean flag = true;
                         for (Contact contact : contacts) {
-                            if (contact.getContactName().equals(contactName)) {
-                                System.out.println("Name : " + contact.getContactName());
-                                System.out.println("Number : " + contact.getMobileNumber());
-                                System.out.println("Address : " + contact.getAddress());
+                            if (contact.getContactName().toLowerCase().contains(name)) {
+                                System.out.println("\nName     : " + contact.getContactName());
+                                System.out.println("Number   : " + contact.getMobileNumber());
+                                System.out.println("Address  : " + contact.getAddress());
                                 System.out.println("Relation : " + contact.getRelationship() + "\n");
                                 flag = false;
-                                break;
+//                                break;
                             }
 
                         }
                         if(flag)
-                            System.out.println(" Contact Not Found ");
+                            System.err.println(" Contact Not Found ");
                     }
                     else
                         System.out.println("No contacts Yet ");
@@ -120,13 +129,15 @@ public class Login {
                 case 4 : {
                     System.out.println("\t\t****** CONTACTS ******\n\n");
                     if (contacts.size() != 0) {
-
+                        System.out.println("+___________________________________________________________________________+");
+                        System.out.printf("| %-4s| %-15s| %-15s| %-17s| %-15s|","S.No","Name","Phone Number","City","Relation");
+                        System.out.println("\n+___________________________________________________________________________+");
+                        int i = 0;
                         for (Contact contact : contacts) {
-                            System.out.println("Name : " + contact.getContactName());
-                            System.out.println("Number : " + contact.getMobileNumber());
-                            System.out.println("Address : " + contact.getAddress());
-                            System.out.println("Relation : " + contact.getRelationship() + "\n");
+                            System.out.printf("| %-4d| %-15s| %-15s| %-17s| %-15s|\n",++i,contact.getContactName(),
+                                    contact.getMobileNumber(),contact.getAddress(),contact.getRelationship());
                         }
+                        System.out.println("+___________________________________________________________________________+\n");
                     }else
                         System.out.println("No contact Yet ");
                     break;
@@ -153,7 +164,7 @@ public class Login {
                                 }
                             }
                             if(flag)
-                                System.out.println("Name Not in Contacts");
+                                System.err.println("Name Not in Contacts");
                         }
                         else {
 
@@ -173,18 +184,30 @@ public class Login {
                                 }
                             }
                             if(flag)
-                                System.out.println("Name Not in Contacts");
+                                System.err.println("Name Not in Contacts");
 
                         }
                     }
                     else
-                        System.out.println("Invalid Input !!!");
+                        System.err.println("Invalid Input !!!");
                     break;
                 }
                 case 6 : {
                     System.out.print("Enter your Favourite contact : ");
                     contactName = SignUp.input.next();
                     SignUp.input.nextLine();
+                    boolean value = false;
+                    for(Contact favorite: favorites){
+                        if(favorite.getContactName().equals(contactName)){
+                            System.out.println("This Contact is Already Added in Favourite list");
+                            value = true;
+                            break;
+                        }
+                    }
+                    if(value)
+                        break;
+
+
                     boolean flag = true;
                     for (Contact contact: contacts){
                         if(contact.getContactName().equals(contactName)){
@@ -204,12 +227,14 @@ public class Login {
                         System.out.println("No favourites Yet ");
                     }
                     else {
+                        System.out.println("+_____________________________________________________________________+");
+                        System.out.printf("| %-15s| %-15s| %-17s| %-15s|","Name","Phone Number","City","Relation");
+                        System.out.println("\n+_____________________________________________________________________+");
                         for(Contact contact: favorites){
-                            System.out.println("Name : " + contact.getContactName());
-                            System.out.println("Number : " + contact.getMobileNumber());
-                            System.out.println("Address : " + contact.getAddress());
-                            System.out.println("Relation : " + contact.getRelationship() + "\n");
+                            System.out.printf("| %-15s| %-15s| %-17s| %-15s|\n",contact.getContactName(),
+                                    contact.getMobileNumber(),contact.getAddress(),contact.getRelationship());
                         }
+                        System.out.println("+_____________________________________________________________________+\n");
                     }
                     break;
                 }
@@ -220,6 +245,20 @@ public class Login {
             }
         }
 
+    }
+    public static String isValidMobileNumber(){
+        SignUp.input.nextLine();
+        while (true) {
+            System.out.print("\nMobile Number : ");
+            String mobileNumber = SignUp.input.nextLine();
+            Pattern pattern = Pattern.compile("^[0-9]{10}$");
+            Matcher matcher = pattern.matcher(mobileNumber);
+            if (matcher.find()) {
+                return mobileNumber;
+            } else {
+                System.out.println("\nInvalid Mobile Number");
+            }
+        }
     }
 
 }
